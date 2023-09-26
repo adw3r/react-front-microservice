@@ -8,13 +8,13 @@ function App() {
 
 
     const [usersList, setUsersList] = useState([{}]);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
+    const [userName, setName] = useState('');
+    const [userEmail, setEmail] = useState('');
+    const [userPhone, setPhone] = useState('');
+    const [userPassword, setPassword] = useState('');
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/users/')
+        axios.get('http://localhost:8000/users/')
             .then(response => {
                 console.log(response.data);
                 setUsersList(response.data);
@@ -23,21 +23,24 @@ function App() {
             .catch((error) => {
                 console.log(error);
             });
-    });
+    }, []);
 
     const addUser = () => {
         let data = {
-            'name': name,
-            'email': email,
-            'phone': phone,
-            'password': password
+            'name': userName,
+            'email': userEmail,
+            'phone': userPhone,
+            'password': userPassword
         };
-        axios.post('http://127.0.0.1:8000/users/', data)
+        axios.post('http://localhost:8000/users/', data)
             .then(response => {
-                alert(response.data);
+                if (response.data['detail'] == 'User with this email already exists') {
+                    alert(response.data)
+                }
+                console.log(response.data);
                 return response.data
             })
-            .catch((error) => {
+            .catch(error => {
                 alert(error);
             });
     }
@@ -53,13 +56,13 @@ function App() {
                     <div className="card-text mb-2">
                         <input onChange={event => setName(event.target.value)} type="text"
                                className="form-control user-name mb-2" placeholder="Enter name:"/>
-                        <input onChange={event => setEmail(event.target.value)} type="text"
+                        <input onChange={event => setPhone(event.target.value)} type="text"
                                className="form-control user-phone mb-2" placeholder="Enter phone:"/>
                         <input onChange={event => setPassword(event.target.value)} type="password"
                                className="form-control user-password mb-2"
                                placeholder="Enter password:"/>
-                        <input onChange={event => setPhone(event.target.value)} type="email"
-                               className="form-control student-email mb-2" placeholder="Enter email:"/>
+                        <input onChange={event => setEmail(event.target.value)} type="email"
+                               className="form-control user-email mb-2" placeholder="Enter email:"/>
                         <button type="submit" onClick={addUser} className="btn btn-outline-primary"
                                 style={{'fontWeight': 'bold'}}>Add
                             user
