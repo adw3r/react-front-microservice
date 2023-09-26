@@ -14,7 +14,7 @@ function App() {
     const [password, setPassword] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:8000/users/')
+        axios.get('http://127.0.0.1:8000/users/')
             .then(response => {
                 console.log(response.data);
                 setUsersList(response.data);
@@ -32,12 +32,12 @@ function App() {
             'phone': phone,
             'password': password
         };
-        axios.post('http://localhost:8000/users/', data)
+        axios.post('http://127.0.0.1:8000/users/', data)
             .then(response => {
                 alert(response.data);
                 return response.data
             })
-            .catch(error => {
+            .catch((error) => {
                 alert(error);
             });
     }
