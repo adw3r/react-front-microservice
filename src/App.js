@@ -3,17 +3,17 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 import axios from "axios";
 
+import UsersList from "./Components/UsersList";
+
 
 function App() {
-
-
     const [usersList, setUsersList] = useState([{}]);
+    const [userId, setId] = useState('');
     const [userName, setName] = useState('');
     const [userEmail, setEmail] = useState('');
     const [userPhone, setPhone] = useState('');
     const [userPassword, setPassword] = useState('');
-
-    useEffect(() => {
+    const extracted = () => {
         axios.get('http://localhost:8000/users/')
             .then(response => {
                 console.log(response.data);
@@ -23,17 +23,27 @@ function App() {
             .catch((error) => {
                 console.log(error);
             });
+    }
+
+    useEffect(() => {
+        extracted();
     }, []);
 
-    const addUser = () => {
-        let data = {
-            'name': userName,
-            'email': userEmail,
-            'phone': userPhone,
-            'password': userPassword
-        };
-        axios.post('http://localhost:8000/users/', data)
+    const deleteUser = (user_id) => {
+        axios.delete(`http://localhost:8000/users/${user_id}`, {})
+            .then(resp => {
+                extracted()
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+    }
+
+    const addNewUser = (user) => {
+        axios.post('http://localhost:8000/users/', user)
             .then(response => {
+                extracted();
                 if (response.data['detail'] == 'User with this email already exists') {
                     alert(response.data)
                 }
@@ -43,6 +53,36 @@ function App() {
             .catch(error => {
                 alert(error);
             });
+    };
+    const updateUser = (user, userId) => {
+        debugger;
+        axios.patch('http://localhost:8000/users/' + userId, user)
+            .then(response => {
+                extracted();
+                if (response.data['detail'] == 'User with this email already exists') {
+                    alert(response.data)
+                }
+                console.log(response.data);
+                return response.data
+            })
+            .catch(error => {
+                alert(error);
+            });
+    };
+
+    const addUser = () => {
+        const user = {
+            'name': userName,
+            'email': userEmail,
+            'phone': userPhone,
+            'password': userPassword
+        };
+        if (userId != '') {
+            updateUser(user, userId);
+        }
+        else {
+            addNewUser(user)
+        }
     }
 
     return (
@@ -54,14 +94,14 @@ function App() {
                 <div className="card-body">
                     <h5 className="card text-white bg-dark pb-1">Add user</h5>
                     <div className="card-text mb-2">
-                        <input onChange={event => setName(event.target.value)} type="text"
+                        <input value={userName} onChange={event => setName(event.target.value)} type="text"
                                className="form-control user-name mb-2" placeholder="Enter name:"/>
-                        <input onChange={event => setPhone(event.target.value)} type="text"
+                        <input value={userPhone} onChange={event => setPhone(event.target.value)} type="text"
                                className="form-control user-phone mb-2" placeholder="Enter phone:"/>
-                        <input onChange={event => setPassword(event.target.value)} type="password"
+                        <input value={userPassword} onChange={event => setPassword(event.target.value)} type="password"
                                className="form-control user-password mb-2"
                                placeholder="Enter password:"/>
-                        <input onChange={event => setEmail(event.target.value)} type="email"
+                        <input value={userEmail} onChange={event => setEmail(event.target.value)} type="email"
                                className="form-control user-email mb-2" placeholder="Enter email:"/>
                         <button type="submit" onClick={addUser} className="btn btn-outline-primary"
                                 style={{'fontWeight': 'bold'}}>Add
@@ -70,7 +110,15 @@ function App() {
                     </div>
                     <h5 className="card text-white bg-dark pb-1">Your users</h5>
                     <div>
-
+                        <UsersList
+                            usersList={usersList}
+                            setUserId={setId}
+                            setUserName={setName}
+                            setUserEmail={setEmail}
+                            setUserPhone={setPhone}
+                            setUserPassword={setPassword}
+                            deleteUser={deleteUser}
+                        />
                     </div>
                 </div>
                 <h6 className="card text-dark bg-warning зн-1">All right &copy; reserved</h6>
