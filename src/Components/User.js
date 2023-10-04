@@ -1,9 +1,7 @@
 import React from "react";
-import axios from "axios";
 
 
 function User(props) {
-
 
 
     const editUser = (user) => {
@@ -18,7 +16,7 @@ function User(props) {
         <p>
             <span className='fw-bold'>
                     {props.user.name} : {props.user.email} : {props.user.phone}
-                    <button className='btn btn-danger' onClick={() => props.deleteUser(props.user.id)}>
+                <button className='btn btn-danger' onClick={() => props.deleteUser(props.user.id)}>
                         Delete
                     </button>
                     <button className='btn btn-warning' onClick={() => editUser(props.user)}>

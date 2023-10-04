@@ -32,6 +32,7 @@ function App() {
     const deleteUser = (user_id) => {
         axios.delete(`http://localhost:8000/users/${user_id}`, {})
             .then(resp => {
+                console.log(resp.data)
                 extracted()
             })
             .catch(error => {
@@ -79,8 +80,7 @@ function App() {
         };
         if (userId != '') {
             updateUser(user, userId);
-        }
-        else {
+        } else {
             addNewUser(user)
         }
     }
